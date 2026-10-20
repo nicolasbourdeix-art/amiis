@@ -60,7 +60,9 @@
   // Dans Safari ou dans le navigateur intégré d'une autre appli, Apple refuse
   // les notifications (« bloquées ») : on guide plutôt vers l'écran d'accueil.
   var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  var installe = ios ? window.navigator.standalone === true : matchMedia('(display-mode: standalone)').matches;
+  // iPhone : le push n'existe (PushManager) que dans une app web ouverte
+  // depuis l'écran d'accueil — pas dans Safari ni dans un navigateur intégré.
+  var installe = ios ? (window.navigator.standalone === true && 'PushManager' in window) : matchMedia('(display-mode: standalone)').matches;
   // iPhone : Chrome, Firefox, Edge… (CriOS, FxiOS, EdgiOS) ajoutent mal l'icône à l'écran d'accueil.
   var autreNavigateur = ios && /CriOS|FxiOS|EdgiOS|OPiOS|GSA\//.test(navigator.userAgent);
   if (autreNavigateur && !installe) document.getElementById('pas-safari').style.display = '';
