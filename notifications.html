@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AMIIS — notifications</title>
+<!-- Pas de start_url dans le manifeste : sur iPhone, l'icône ajoutée à
+     l'écran d'accueil rouvre cette page avec ses paramètres. -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AMIIS">
+<meta name="theme-color" content="#F7941D">
+<style>
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #F6F3EE;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; color: #2b2b2b; padding: 20px; box-sizing: border-box; }
+  .box { background: #fff; border-radius: 18px; box-shadow: 0 6px 24px rgba(0,0,0,.08); max-width: 440px; width: 100%; padding: 26px 24px; text-align: center; }
+  img { width: 56px; margin-bottom: 8px; }
+  h1 { font-size: 20px; margin: 0 0 4px; } .nom { color: #C2410C; font-weight: 700; margin-bottom: 16px; }
+  p { font-size: 14px; color: #555; line-height: 1.5; margin: 0 0 14px; }
+  button, a.btn { display: block; width: 100%; box-sizing: border-box; font: inherit; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; padding: 14px; cursor: pointer;
+    background: #F7941D; color: #fff; text-decoration: none; margin-top: 10px; }
+  .sec { background: #eee; color: #444; }
+  .etat { font-size: 14px; padding: 12px; border-radius: 12px; background: #FFF6E8; margin-bottom: 12px; }
+  .ok { background: #E8F5E9; color: #2d7a2d; } .err { background: #FDEAEA; color: #c0392b; }
+  ol { text-align: left; font-size: 14px; color: #444; padding-left: 20px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="box">
+  <img src="icon.png" alt="AMIIS">
+  <h1>Notifications AMIIS</h1>
+  <div class="nom" id="nom"></div>
+  <div class="etat" id="etat">Chargement…</div>
+  <div id="ios" style="display:none">
+    <p><b>Sur iPhone / iPad</b>, les notifications ne fonctionnent que depuis l'écran d'accueil :</p>
+    <ol><li>Touchez <b>Partager</b> (carré avec une flèche) en bas de Safari.</li><li>Choisissez <b>« Sur l'écran d'accueil »</b>, puis <b>Ajouter</b>.</li>
+      <li>Ouvrez <b>AMIIS</b> depuis l'écran d'accueil et touchez « Activer les notifications ».</li></ol>
+  </div>
+  <button id="activer" style="display:none">🔔 Activer les notifications</button>
+  <button id="desactiver" class="sec" style="display:none">Ne plus recevoir de notifications ici</button>
+  <a class="btn sec" id="retour" style="display:none">Ouvrir mon espace AMIIS</a>
+</div>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  // Paramètres donnés par l'appli : app (App ID OneSignal), t (étiquette
+  // signée du destinataire), nom (affiché), retour (lien de son espace).
+  var P = new URLSearchParams(location.search), APP = P.get('app') || '', TAG = P.get('t') || '', RETOUR = P.get('retour') || '';
+  var $ = function(id) { return document.getElementById(id); };
+  $('nom').textContent = P.get('nom') || '';
+  if (/^https:\/\//.test(RETOUR)) { $('retour').href = RETOUR; $('retour').style.display = ''; }
+  function etat(txt, cls) { var e = $('etat'); e.textContent = txt; e.className = 'etat' + (cls ? ' ' + cls : ''); }
+  var ios = /iPhone|iPad|iPod/.test(navigator.userAgent), installe = window.navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+  if (!APP || !/^[\w-]{6,80}$/.test(TAG)) etat('Lien incomplet : rouvrez-le depuis votre espace AMIIS (bouton 🔔).', 'err');
+  else if (ios && !installe) { etat('Une étape avant d\'activer les notifications :'); $('ios').style.display = ''; }
+  else if (!('Notification' in window) || !('serviceWorker' in navigator)) etat('Ce navigateur ne permet pas les notifications. Essayez Chrome, Edge, Firefox ou Safari récent.', 'err');
+  else {
+    var dossier = location.pathname.replace(/[^/]*$/, '');
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      try {
+        await OneSignal.init({ appId: APP, serviceWorkerPath: dossier.replace(/^\//, '') + 'OneSignalSDKWorker.js', serviceWorkerParam: { scope: dossier } });
+      } catch (e) { etat('Service de notifications indisponible : ' + (e && e.message || e), 'err'); return; }
+      function maj() {
+        var actif = OneSignal.Notifications.permission && OneSignal.User.PushSubscription.optedIn;
+        if (actif) { etat('✅ Notifications activées sur cet appareil.', 'ok'); $('activer').style.display = 'none'; $('desactiver').style.display = ''; }
+        else if (Notification.permission === 'denied') { etat('Les notifications sont bloquées pour ce site : autorisez-les dans les réglages du navigateur, puis rechargez.', 'err'); $('activer').style.display = 'none'; }
+        else { etat('Recevez les messages d\'AMIIS sur cet appareil, même appli fermée.'); $('activer').style.display = ''; $('desactiver').style.display = 'none'; }
+      }
+      $('activer').onclick = async function() {
+        etat('Autorisation demandée…');
+        try {
+          await OneSignal.Notifications.requestPermission();
+          if (OneSignal.Notifications.permission) {
+            await OneSignal.User.PushSubscription.optIn();
+            OneSignal.User.addTag(TAG, '1');
+          }
+        } catch (e) { etat('Activation impossible : ' + (e && e.message || e), 'err'); return; }
+        setTimeout(maj, 800);
+      };
+      $('desactiver').onclick = async function() {
+        try { OneSignal.User.removeTag(TAG); await OneSignal.User.PushSubscription.optOut(); } catch (e) {}
+        setTimeout(maj, 500);
+      };
+      // Déjà abonné (autre destinataire sur le même appareil) : on ajoute l'étiquette.
+      if (OneSignal.Notifications.permission && OneSignal.User.PushSubscription.optedIn) OneSignal.User.addTag(TAG, '1');
+      OneSignal.User.PushSubscription.addEventListener('change', maj);
+      maj();
+    });
+  }
+</script>
+</body>
+</html>
