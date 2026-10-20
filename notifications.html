@@ -75,7 +75,7 @@
           etat('✅ Notifications activées sur cet appareil.', 'ok'); $('activer').style.display = 'none'; $('desactiver').style.display = '';
           // Depuis l'icône de l'écran d'accueil : rien d'autre à faire ici (l'espace
           // AMIIS s'ouvre par sa propre icône, en plein écran).
-          if (installe) $('retour').style.display = 'none';
+          if (installe) { $('retour').style.display = 'none'; etat('✅ Notifications activées sur cet appareil. C\'est tout : vous pouvez fermer cette page, les notifications arrivent même appli fermée. Pour travailler, ouvrez votre icône AMIIS habituelle.', 'ok'); }
         }
         else if (Notification.permission === 'denied') { etat('Les notifications sont bloquées pour ce site : autorisez-les dans les réglages du navigateur, puis rechargez.', 'err'); $('activer').style.display = 'none'; }
         else { etat('Recevez les messages d\'AMIIS sur cet appareil, même appli fermée.'); $('activer').style.display = ''; $('desactiver').style.display = 'none'; }
