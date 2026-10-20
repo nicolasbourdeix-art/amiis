@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="AMIIS">
+<meta name="apple-mobile-web-app-title" content="AMIIS Notifs">
 <meta name="theme-color" content="#F7941D">
 <style>
   body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #F6F3EE;
@@ -43,7 +43,6 @@
   <button id="activer" style="display:none">🔔 Activer les notifications</button>
   <button id="desactiver" class="sec" style="display:none">Ne plus recevoir de notifications ici</button>
   <a class="btn sec" id="retour" style="display:none">Ouvrir mon espace AMIIS</a>
-  <button class="sec" id="rester" style="display:none">Rester sur cette page</button>
 </div>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
@@ -74,14 +73,9 @@
         var actif = OneSignal.Notifications.permission && OneSignal.User.PushSubscription.optedIn;
         if (actif) {
           etat('✅ Notifications activées sur cet appareil.', 'ok'); $('activer').style.display = 'none'; $('desactiver').style.display = '';
-          // Ouverte depuis l'icône de l'écran d'accueil, déjà abonnée : on part
-          // directement vers l'espace AMIIS (sauf « Rester sur cette page »).
-          if (installe && RETOUR && $('retour').style.display !== 'none' && !window._resteIci && !window._redirige) {
-            window._redirige = setTimeout(function() { location.href = RETOUR; }, 1500);
-            etat('✅ Notifications activées — ouverture de votre espace AMIIS…', 'ok');
-            $('rester').style.display = '';
-            $('rester').onclick = function() { clearTimeout(window._redirige); window._resteIci = true; $('rester').style.display = 'none'; etat('✅ Notifications activées sur cet appareil.', 'ok'); };
-          }
+          // Depuis l'icône de l'écran d'accueil : rien d'autre à faire ici (l'espace
+          // AMIIS s'ouvre par sa propre icône, en plein écran).
+          if (installe) $('retour').style.display = 'none';
         }
         else if (Notification.permission === 'denied') { etat('Les notifications sont bloquées pour ce site : autorisez-les dans les réglages du navigateur, puis rechargez.', 'err'); $('activer').style.display = 'none'; }
         else { etat('Recevez les messages d\'AMIIS sur cet appareil, même appli fermée.'); $('activer').style.display = ''; $('desactiver').style.display = 'none'; }

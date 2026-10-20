@@ -1,6 +1,6 @@
 {
-  "name": "AMIIS",
-  "short_name": "AMIIS",
+  "name": "AMIIS Notifications",
+  "short_name": "AMIIS Notifs",
   "description": "Notifications de l'association AMIIS",
   "display": "standalone",
   "background_color": "#FFFFFF",
