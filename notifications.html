@@ -35,7 +35,8 @@
   <div class="etat" id="etat">Chargement…</div>
   <div id="ios" style="display:none">
     <p><b>Sur iPhone / iPad</b>, les notifications ne fonctionnent que depuis l'écran d'accueil :</p>
-    <ol><li>Touchez <b>Partager</b> (carré avec une flèche) en bas de Safari.</li><li>Choisissez <b>« Sur l'écran d'accueil »</b>, puis <b>Ajouter</b>.</li>
+    <ol><li>Si cette page s'est ouverte dans une autre appli (croix en haut à gauche), ouvrez-la d'abord dans <b>Safari</b> (menu ≡ ou « Ouvrir dans Safari »), ou copiez le lien dans Safari.</li>
+      <li>Touchez <b>Partager</b> (carré avec une flèche) en bas de Safari.</li><li>Choisissez <b>« Sur l'écran d'accueil »</b>, puis <b>Ajouter</b>.</li>
       <li>Ouvrez <b>AMIIS</b> depuis l'écran d'accueil et touchez « Activer les notifications ».</li></ol>
   </div>
   <button id="activer" style="display:none">🔔 Activer les notifications</button>
@@ -51,7 +52,12 @@
   $('nom').textContent = P.get('nom') || '';
   if (/^https:\/\//.test(RETOUR)) { $('retour').href = RETOUR; $('retour').style.display = ''; }
   function etat(txt, cls) { var e = $('etat'); e.textContent = txt; e.className = 'etat' + (cls ? ' ' + cls : ''); }
-  var ios = /iPhone|iPad|iPod/.test(navigator.userAgent), installe = window.navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+  // iPhone / iPad (iPadOS se présente comme un Mac tactile) : notifications
+  // seulement depuis l'icône ajoutée à l'écran d'accueil (navigator.standalone).
+  // Dans Safari ou dans le navigateur intégré d'une autre appli, Apple refuse
+  // les notifications (« bloquées ») : on guide plutôt vers l'écran d'accueil.
+  var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var installe = ios ? window.navigator.standalone === true : matchMedia('(display-mode: standalone)').matches;
   if (!APP || !/^[\w-]{6,80}$/.test(TAG)) etat('Lien incomplet : rouvrez-le depuis votre espace AMIIS (bouton 🔔).', 'err');
   else if (ios && !installe) { etat('Une étape avant d\'activer les notifications :'); $('ios').style.display = ''; }
   else if (!('Notification' in window) || !('serviceWorker' in navigator)) etat('Ce navigateur ne permet pas les notifications. Essayez Chrome, Edge, Firefox ou Safari récent.', 'err');
