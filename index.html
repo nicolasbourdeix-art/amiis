@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AMIIS</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #F6F3EE;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; color: #2b2b2b; text-align: center; padding: 20px; box-sizing: border-box; }
+  .sp { width: 52px; height: 52px; margin: 0 auto 18px; border: 5px solid #f3d9b5; border-top-color: #F7941D; border-radius: 50%; animation: t 1s linear infinite; }
+  @keyframes t { to { transform: rotate(360deg); } }
+  h1 { font-size: 20px; margin: 0 0 8px; } p { font-size: 14px; color: #666; margin: 0 0 18px; }
+  a { display: inline-block; background: #F7941D; color: #fff; text-decoration: none; font-weight: 700; padding: 12px 22px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<div>
+  <div class="sp"></div>
+  <h1>Association AMIIS</h1>
+  <p>Ouverture de votre page… / Opening your page…</p>
+  <a id="lien" href="#">Continuer / Continue</a>
+</div>
+<script>
+  var APP = 'https://script.google.com/macros/s/AKfycbz4gHbfrNc0zJN1CrLb5y6s1JuF32mAdR-yFUDsEH0RKcSutef6GppSAZFIkJxBPfQIZg/exec';
+  var cible = APP + (location.search || '') + (location.hash || '');
+  document.getElementById('lien').href = cible;
+  location.replace(cible);
+</script>
+</body>
+</html>
