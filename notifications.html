@@ -36,6 +36,7 @@
   <div class="etat" id="etat">Chargement…</div>
   <div id="ios" style="display:none">
     <p><b>Sur iPhone / iPad</b>, les notifications ne fonctionnent que depuis l'écran d'accueil :</p>
+  <p id="pas-safari" style="display:none;color:#c0392b;font-weight:700">⚠️ Vous êtes dans un autre navigateur que Safari (Chrome…) : copiez ce lien et ouvrez-le dans <b>Safari</b>, sinon l'icône n'aura pas le logo AMIIS et les notifications peuvent ne pas marcher.</p>
     <ol><li>Si cette page s'est ouverte dans une autre appli (croix en haut à gauche), ouvrez-la d'abord dans <b>Safari</b> (menu ≡ ou « Ouvrir dans Safari »), ou copiez le lien dans Safari.</li>
       <li>Touchez <b>Partager</b> (carré avec une flèche) en bas de Safari.</li><li>Choisissez <b>« Sur l'écran d'accueil »</b>, puis <b>Ajouter</b>.</li>
       <li>Ouvrez <b>AMIIS</b> depuis l'écran d'accueil et touchez « Activer les notifications ».</li></ol>
@@ -59,6 +60,9 @@
   // les notifications (« bloquées ») : on guide plutôt vers l'écran d'accueil.
   var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var installe = ios ? window.navigator.standalone === true : matchMedia('(display-mode: standalone)').matches;
+  // iPhone : Chrome, Firefox, Edge… (CriOS, FxiOS, EdgiOS) ajoutent mal l'icône à l'écran d'accueil.
+  var autreNavigateur = ios && /CriOS|FxiOS|EdgiOS|OPiOS|GSA\//.test(navigator.userAgent);
+  if (autreNavigateur && !installe) document.getElementById('pas-safari').style.display = '';
   if (!APP || !/^[\w-]{6,80}$/.test(TAG)) etat('Lien incomplet : rouvrez-le depuis votre espace AMIIS (bouton 🔔).', 'err');
   else if (ios && !installe) { etat('Une étape avant d\'activer les notifications :'); $('ios').style.display = ''; }
   else if (!('Notification' in window) || !('serviceWorker' in navigator)) etat('Ce navigateur ne permet pas les notifications. Essayez Chrome, Edge, Firefox ou Safari récent.', 'err');
