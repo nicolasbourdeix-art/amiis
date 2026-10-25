@@ -46,7 +46,9 @@
   // contrat à signer, dossier…). Intégrée ainsi, l'application n'a pas le
   // bandeau Google « créée par un utilisateur d'Apps Script ».
   var APP = 'https://script.google.com/macros/s/AKfycbz4gHbfrNc0zJN1CrLb5y6s1JuF32mAdR-yFUDsEH0RKcSutef6GppSAZFIkJxBPfQIZg/exec';
-  var directe = APP + (location.search || '') + (location.hash || '');
+  // Ouverture directe (secours) : cadre=direct, sinon l'appli reviendrait ici.
+  var qd = new URLSearchParams(location.search); qd.set('cadre', 'direct');
+  var directe = APP + '?' + qd.toString() + (location.hash || '');
   var cadre = document.getElementById('app');
   document.getElementById('secours').href = directe;
   function charger(v) {
