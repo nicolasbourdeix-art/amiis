@@ -2,7 +2,14 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Même échelle qu'à l'ouverture directe de l'appli (page de 980 px que le
+     téléphone réduit : l'interface mobile est réglée pour ça), sauf les pages
+     de signature, prévues pour la largeur de l'écran. -->
+<meta name="viewport" id="vp" content="width=980">
+<script>
+  if (/[?&](contrat|cession|ndf)=/.test(location.search)) document.getElementById('vp').content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+  else if (Math.min(screen.width, screen.height) < 900) document.documentElement.className = 'reduit';
+</script>
 <meta name="robots" content="noindex">
 <title>AMIIS</title>
 <!-- Installable (Chrome : menu ⋮ › Installer AMIIS) : l'appli s'ouvre sur l'accueil, sans bandeau Google. -->
@@ -19,6 +26,8 @@
   h1 { font-size: 20px; margin: 0 0 8px; } p { font-size: 14px; color: #666; margin: 0 0 18px; }
   a { display: inline-block; background: #F7941D; color: #fff; text-decoration: none; font-weight: 700; padding: 12px 22px; border-radius: 12px; }
   #secours { visibility: hidden; }
+  /* Écran d'attente lisible sur téléphone (page réduite à 980 px). */
+  html.reduit .sp { width: 120px; height: 120px; border-width: 12px; margin-bottom: 40px; } html.reduit h1 { font-size: 48px; } html.reduit p { font-size: 34px; margin-bottom: 40px; } html.reduit a { font-size: 34px; padding: 26px 46px; border-radius: 26px; }
 </style>
 </head>
 <body>
