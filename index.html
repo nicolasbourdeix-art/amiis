@@ -68,7 +68,11 @@
     if (!charge || (e.target && e.target.closest && e.target.closest('#attente'))) return;
     if (++appuisIci >= 2) ouvrirSansCadre();
   }, { capture: true, passive: true });
-  charger('');
+  // Android : l'appli est ouverte directement, sans ce cadre. Sur certains
+  // téléphones (Chrome), elle y défilait sans recevoir aucun appui ; ouverte
+  // directement, tout fonctionne (avec le bandeau Google en haut).
+  if (/Android/i.test(navigator.userAgent)) ouvrirSansCadre();
+  else charger('');
   // Si le cadre tarde (réseau, blocage du navigateur), lien d'ouverture directe.
   setTimeout(function() { document.getElementById('secours').style.visibility = 'visible'; }, 12000);
   // L'application signale une nouvelle version : on recharge le cadre.
