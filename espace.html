@@ -63,6 +63,15 @@
   var autreNavigateur = ios && /CriOS|FxiOS|EdgiOS|OPiOS|GSA\//.test(navigator.userAgent);
   if (autreNavigateur && !installe) document.getElementById('pas-safari').style.display = '';
   var stock = function(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+  // Certains téléphones Android (Chrome) ne transmettent pas les appuis à
+  // l'appli dans ce cadre : appuis reçus ici, ou signalés par l'appli, et
+  // on ouvre l'appli directement, sans cadre.
+  var basculee = false, appuisIci = 0;
+  function ouvrirSansCadre() { if (basculee) return; basculee = true; location.replace(APP + '?role=' + encodeURIComponent(ROLE) + '&code=' + encodeURIComponent(CODE) + '&cadre=direct'); }
+  document.addEventListener('touchstart', function(e) {
+    if (e.target && e.target.closest && e.target.closest('.carte, button, a, input')) return;
+    if ($('app').src && ++appuisIci >= 2) ouvrirSansCadre();
+  }, { capture: true, passive: true });
   function charger(v) { $('app').src = APP + '?role=' + encodeURIComponent(ROLE) + '&code=' + encodeURIComponent(CODE) + (v ? '&v=' + encodeURIComponent(v) : ''); }
   charger('');
   // iPhone dans Safari (pas encore installée) : guide d'installation, une fois par semaine au plus.
@@ -108,6 +117,7 @@
   window.addEventListener('message', function(e) {
     var d = e.data || {};
     if (d.amiis === 'notif-activer') proposer(true);
+    else if (d.amiis === 'cadreDirect') ouvrirSansCadre();
     else if (d.amiis === 'recharger') charger(String(Date.now()));
   });
 </script>

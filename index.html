@@ -56,7 +56,18 @@
     q.set('cadre', 'relais'); if (v) q.set('v', v);
     cadre.src = APP + '?' + q.toString() + (location.hash || '');
   }
-  cadre.addEventListener('load', function() { document.getElementById('attente').style.display = 'none'; });
+  var charge = false, basculee = false;
+  cadre.addEventListener('load', function() { charge = true; document.getElementById('attente').style.display = 'none'; });
+  // Certains téléphones Android (Chrome) ne transmettent pas les appuis à
+  // l'appli dans ce cadre : la page défile mais aucun bouton ne répond.
+  // Appuis reçus ici (et non par l'appli), ou signalés par l'appli : on
+  // ouvre l'appli directement, sans cadre.
+  function ouvrirSansCadre() { if (basculee) return; basculee = true; location.replace(directe); }
+  var appuisIci = 0;
+  document.addEventListener('touchstart', function(e) {
+    if (!charge || (e.target && e.target.closest && e.target.closest('#attente'))) return;
+    if (++appuisIci >= 2) ouvrirSansCadre();
+  }, { capture: true, passive: true });
   charger('');
   // Si le cadre tarde (réseau, blocage du navigateur), lien d'ouverture directe.
   setTimeout(function() { document.getElementById('secours').style.visibility = 'visible'; }, 12000);
@@ -64,6 +75,7 @@
   window.addEventListener('message', function(e) {
     var d = e.data || {};
     if (d.amiis === 'recharger') charger(String(Date.now()));
+    else if (d.amiis === 'cadreDirect') ouvrirSansCadre();
   });
 </script>
 </body>
