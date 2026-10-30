@@ -7,7 +7,8 @@
      de signature, prévues pour la largeur de l'écran. -->
 <meta name="viewport" id="vp" content="width=980">
 <script>
-  if (/[?&](contrat|cession|ndf)=/.test(location.search)) document.getElementById('vp').content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+  // &essai=ecran : essai du cadre à la largeur de l'écran (au lieu de 980 px).
+  if (/[?&](contrat|cession|ndf)=/.test(location.search) || /[?&]essai=ecran/.test(location.search)) document.getElementById('vp').content = 'width=device-width, initial-scale=1, viewport-fit=cover';
   else if (Math.min(screen.width, screen.height) < 900) document.documentElement.className = 'reduit';
 </script>
 <meta name="robots" content="noindex">
@@ -71,7 +72,10 @@
   // Android : l'appli est ouverte directement, sans ce cadre. Sur certains
   // téléphones (Chrome), elle y défilait sans recevoir aucun appui ; ouverte
   // directement, tout fonctionne (avec le bandeau Google en haut).
-  if (/Android/i.test(navigator.userAgent)) ouvrirSansCadre();
+  // &essai=… : on garde le cadre, sans bascule automatique (essais sur téléphone).
+  var essai = /[?&]essai=/.test(location.search);
+  if (essai) basculee = true;
+  if (/Android/i.test(navigator.userAgent) && !essai) ouvrirSansCadre();
   else charger('');
   // Si le cadre tarde (réseau, blocage du navigateur), lien d'ouverture directe.
   setTimeout(function() { document.getElementById('secours').style.visibility = 'visible'; }, 12000);
