@@ -10,7 +10,7 @@
   // Android : largeur de l'écran (comme l'appli installée Espace AMIIS) ; avec
   // la page de 980 px réduite, Chrome ne transmettait plus les appuis à
   // l'appli sur certains téléphones (Blackview Shark 8). &essai=980 : ancien réglage.
-  if (/[?&](contrat|cession|ndf)=/.test(location.search) || (/Android/i.test(navigator.userAgent) && !/[?&]essai=980/.test(location.search))) document.getElementById('vp').content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+  if (/[?&](contrat|cession|ndf|invitation)=/.test(location.search) || (/Android/i.test(navigator.userAgent) && !/[?&]essai=980/.test(location.search))) document.getElementById('vp').content = 'width=device-width, initial-scale=1, viewport-fit=cover';
   else if (Math.min(screen.width, screen.height) < 900) document.documentElement.className = 'reduit';
 </script>
 <meta name="robots" content="noindex">
