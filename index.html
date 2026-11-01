@@ -30,9 +30,9 @@
   a { display: inline-block; background: #F7941D; color: #fff; text-decoration: none; font-weight: 700; padding: 12px 22px; border-radius: 12px; }
   #secours { visibility: hidden; }
   #attente { overflow: hidden; }
-  /* Même taille que sur l'écran de chargement de l'appli : 40 % de l'écran sur téléphone. */
-  #attente .ai-intro { --w: min(40vw, 280px); margin: 0 auto 28px; }
-  html.reduit #attente .ai-intro { --w: 40vw; }
+  /* Même taille que sur l'écran de chargement de l'appli : 52 % de l'écran sur téléphone. */
+  #attente .ai-intro { --w: min(52vw, 300px); margin: 0 auto 28px; }
+  html.reduit #attente .ai-intro { --w: 52vw; }
   /* Animation d'ouverture AMIIS (bandes qui s'enroulent, têtes, nom, signature). */
   .ai-intro { --w: 280px; width: var(--w); display: flex; flex-direction: column; align-items: center; }
   .ai-logo { width: 100%; aspect-ratio: 1; will-change: transform; animation: ai-tour 2.3s cubic-bezier(.3,0,.15,1) both; }
@@ -76,7 +76,6 @@
     </svg></div></div>
     <div class="ai-nom">AMIIS</div><div class="ai-base">la mutualisation simplifiée</div>
   </div>
-    <p>Ouverture de votre page… / Opening your page…</p>
     <a id="secours" href="#">Ouvrir directement / Open directly</a>
   </div>
 </div>
