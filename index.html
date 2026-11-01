@@ -23,12 +23,42 @@
 <style>
   html, body { margin: 0; height: 100%; background: #F6F3EE; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; color: #2b2b2b; }
   iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; }
-  #attente { position: fixed; inset: 0; z-index: 2; background: #F6F3EE; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
+  #attente { position: fixed; inset: 0; z-index: 2; background: #F3F4F6; transition: opacity .35s; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
   .sp { width: 52px; height: 52px; margin: 0 auto 18px; border: 5px solid #f3d9b5; border-top-color: #F7941D; border-radius: 50%; animation: t 1s linear infinite; }
   @keyframes t { to { transform: rotate(360deg); } }
   h1 { font-size: 20px; margin: 0 0 8px; } p { font-size: 14px; color: #666; margin: 0 0 18px; }
   a { display: inline-block; background: #F7941D; color: #fff; text-decoration: none; font-weight: 700; padding: 12px 22px; border-radius: 12px; }
   #secours { visibility: hidden; }
+  #attente .ai-intro { width: min(62vw, 330px); height: auto; aspect-ratio: 1300 / 1810; display: block; margin: 0 auto 14px; }
+  html.reduit #attente .ai-intro { width: 56vw; }
+  /* Animation d'ouverture AMIIS : bandes qui s'enroulent, têtes, nom et signature. */
+  .ai-intro path, .ai-intro circle.ai-r { fill:none; stroke-width:68; stroke-linecap:round; }
+  .ai-intro .ai-o { stroke:#E8973F; } .ai-intro .ai-g { stroke:#5E605F; }
+  .ai-intro .ai-a { transform-box:view-box; transform-origin:0 0; }
+  .ai-intro .ai-bande { stroke-dasharray:.2706 2; stroke-dashoffset:.2706; animation:ai-arrivee 1.7s cubic-bezier(.45,0,.2,1) forwards; }
+  .ai-intro .ai-bande.ai-g { animation-delay:.08s; }
+  @keyframes ai-arrivee { to { stroke-dashoffset:-.7294; } }
+  .ai-intro .ai-tour { animation:ai-tour 2.3s cubic-bezier(.3,0,.15,1) both; }
+  @keyframes ai-tour { from { transform:rotate(-200deg); } to { transform:rotate(0); } }
+  .ai-intro .ai-tete { animation:.8s 1.45s cubic-bezier(.34,1.56,.64,1) both; }
+  .ai-intro .ai-tete.ai-to { animation-name:ai-teteO; } .ai-intro .ai-tete.ai-tg { animation-name:ai-teteG; }
+  @keyframes ai-teteO { from { transform:translate(195px,378px) scale(0); } to { transform:none; } }
+  @keyframes ai-teteG { from { transform:translate(-195px,-378px) scale(0); } to { transform:none; } }
+  .ai-intro .ai-pose { animation:ai-pose .5s 2.15s ease-out both; }
+  @keyframes ai-pose { 0%,100% { transform:scale(1); } 45% { transform:scale(1.04); } }
+  .ai-intro .ai-nom { font:800 200px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; letter-spacing:18px; fill:#5E605F; }
+  .ai-intro .ai-baseline { font:500 68px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; letter-spacing:2px; fill:#E8973F; }
+  .ai-intro .ai-titre { animation:ai-monte .7s 2.25s cubic-bezier(.2,.8,.2,1) both; }
+  .ai-intro .ai-signature { animation:ai-monte .7s 2.55s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes ai-monte { from { opacity:0; transform:translateY(60px); filter:blur(6px); } to { opacity:1; transform:none; filter:none; } }
+  /* Déjà vue (page de lien) ou mouvements réduits : logo posé directement. */
+  .ai-intro.ai-fixe .ai-bande { animation:none; stroke-dashoffset:-.7294; }
+  .ai-intro.ai-fixe .ai-tour, .ai-intro.ai-fixe .ai-tete, .ai-intro.ai-fixe .ai-pose, .ai-intro.ai-fixe .ai-titre, .ai-intro.ai-fixe .ai-signature { animation:none; }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-intro .ai-bande { animation:none; stroke-dashoffset:-.7294; }
+    .ai-intro .ai-tour, .ai-intro .ai-tete, .ai-intro .ai-pose, .ai-intro .ai-titre, .ai-intro .ai-signature { animation:none; }
+  }
+
   /* Écran d'attente lisible sur téléphone (page réduite à 980 px). */
   html.reduit .sp { width: 120px; height: 120px; border-width: 12px; margin-bottom: 40px; } html.reduit h1 { font-size: 48px; } html.reduit p { font-size: 34px; margin-bottom: 40px; } html.reduit a { font-size: 34px; padding: 26px 46px; border-radius: 26px; }
 </style>
@@ -36,8 +66,25 @@
 <body>
 <div id="attente">
   <div>
-    <div class="sp"></div>
-    <h1>Association AMIIS</h1>
+    <svg class="ai-intro" viewBox="-60 -150 1300 1810" preserveAspectRatio="xMidYMid meet" role="img" aria-label="AMIIS, la mutualisation simplifiée">
+    <defs>
+      <mask id="ai-trous" maskUnits="userSpaceOnUse" x="-6000" y="-6000" width="12000" height="12000">
+        <rect x="-6000" y="-6000" width="12000" height="12000" fill="#fff"/>
+        <g transform="translate(393 222)"><g class="ai-a ai-tete ai-to"><circle r="90"/></g></g>
+        <g transform="translate(783 978)"><g class="ai-a ai-tete ai-tg"><circle r="90"/></g></g>
+      </mask>
+    </defs>
+    <g transform="translate(588 600)"><g class="ai-a ai-tour"><g class="ai-a ai-pose"><g transform="translate(-588 -600)">
+      <g mask="url(#ai-trous)">
+        <path class="ai-bande ai-o" pathLength="1" d="M4608 767 H608 A315 315 0 1 1 923 452"/>
+        <path class="ai-bande ai-g" pathLength="1" d="M-3432 433 H568 A315 315 0 1 1 253 748"/>
+      </g>
+      <g transform="translate(393 222)"><g class="ai-a ai-tete ai-to"><circle class="ai-r ai-o" r="124"/></g></g>
+      <g transform="translate(783 978)"><g class="ai-a ai-tete ai-tg"><circle class="ai-r ai-g" r="124"/></g></g>
+    </g></g></g></g>
+    <g class="ai-a ai-titre"><text class="ai-nom" x="588" y="1395" text-anchor="middle">AMIIS</text></g>
+    <g class="ai-a ai-signature"><text class="ai-baseline" x="588" y="1510" text-anchor="middle">la mutualisation simplifiée</text></g>
+  </svg>
     <p>Ouverture de votre page… / Opening your page…</p>
     <a id="secours" href="#">Ouvrir directement / Open directly</a>
   </div>
@@ -60,7 +107,12 @@
     cadre.src = APP + '?' + q.toString() + (location.hash || '');
   }
   var charge = false, basculee = false;
-  cadre.addEventListener('load', function() { charge = true; document.getElementById('attente').style.display = 'none'; });
+  // Écran d'ouverture (animation AMIIS) : gardé jusqu'à la fin de l'animation (3 s) au moins.
+  var debutAttente = Date.now();
+  cadre.addEventListener('load', function() {
+    charge = true;
+    setTimeout(function() { var a = document.getElementById('attente'); a.style.opacity = '0'; setTimeout(function() { a.style.display = 'none'; }, 360); }, Math.max(0, 3100 - (Date.now() - debutAttente)));
+  });
   // Certains téléphones Android (Chrome) ne transmettent pas les appuis à
   // l'appli dans ce cadre : la page défile mais aucun bouton ne répond.
   // Appuis reçus ici (et non par l'appli), ou signalés par l'appli : on
