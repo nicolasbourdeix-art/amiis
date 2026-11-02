@@ -18,6 +18,15 @@
 <title>AMIIS</title>
 <!-- Installable (Chrome : menu ⋮ › Installer AMIIS) : l'appli s'ouvre sur l'accueil, sans bandeau Google. -->
 <link rel="manifest" href="manifest-app.webmanifest">
+<script>
+  // Lien d'un portail (role + code, ex. portail diffusion) : l'icône ajoutée à
+  // l'écran d'accueil doit rouvrir CE portail avec son code. Le manifeste de
+  // l'appli (start_url = accueil) l'ouvrirait sur l'identification de
+  // l'interface : on prend celui sans start_url, qui garde l'adresse du lien.
+  if (/[?&]role=[^&]/.test(location.search) && /[?&]code=[^&]/.test(location.search)) {
+    var mf = document.querySelector('link[rel="manifest"]'); if (mf) mf.href = 'manifest-espace.webmanifest?v=2';
+  }
+</script>
 <link rel="icon" href="icon-192-v2.png">
 <link rel="apple-touch-icon" href="https://nicolasbourdeix-art.github.io/amiis/apple-touch-icon-v2.png">
 <meta name="theme-color" content="#F7941D">
