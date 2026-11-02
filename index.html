@@ -43,8 +43,8 @@
   #secours { visibility: hidden; }
   #attente { overflow: hidden; }
   /* Même taille que sur l'écran de chargement de l'appli : 52 % de l'écran sur téléphone. */
-  #attente .ai-intro { --w: min(52vw, 300px); margin: 0 auto 28px; }
-  html.reduit #attente .ai-intro { --w: 52vw; }
+  #attente .ai-intro { --w: min(52vw, 36vh, 300px); margin: 0 auto 28px; }
+  html.reduit #attente .ai-intro { --w: min(52vw, 36vh); }
   /* Animation d'ouverture AMIIS (bandes qui s'enroulent, têtes, nom, signature). */
   .ai-intro { --w: 280px; width: var(--w); display: flex; flex-direction: column; align-items: center; }
   .ai-logo { width: 100%; aspect-ratio: 1; will-change: transform; animation: ai-tour 2.3s cubic-bezier(.3,0,.15,1) both; }
