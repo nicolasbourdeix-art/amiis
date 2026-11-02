@@ -17,15 +17,17 @@
 <!-- Écran d'ouverture : animation AMIIS (version du 01/11/2026). -->
 <title>AMIIS</title>
 <!-- Installable (Chrome : menu ⋮ › Installer AMIIS) : l'appli s'ouvre sur l'accueil, sans bandeau Google. -->
-<link rel="manifest" href="manifest-app.webmanifest">
 <script>
-  // Lien d'un portail (role + code, ex. portail diffusion) : l'icône ajoutée à
-  // l'écran d'accueil doit rouvrir CE portail avec son code. Le manifeste de
-  // l'appli (start_url = accueil) l'ouvrirait sur l'identification de
-  // l'interface : on prend celui sans start_url, qui garde l'adresse du lien.
-  if (/[?&]role=[^&]/.test(location.search) && /[?&]code=[^&]/.test(location.search)) {
-    var mf = document.querySelector('link[rel="manifest"]'); if (mf) mf.href = 'manifest-espace.webmanifest?v=2';
-  }
+  // Manifeste choisi AVANT que le navigateur le lise (aucune balise fixe) :
+  // lien d'un portail (role + code, ex. portail diffusion) → manifeste sans
+  // start_url, l'icône de l'écran d'accueil rouvre CE portail avec son code ;
+  // sinon celui de l'appli (start_url = accueil).
+  (function() {
+    var portail = /[?&]role=[^&]/.test(location.search) && /[?&]code=[^&]/.test(location.search);
+    var l = document.createElement('link'); l.rel = 'manifest';
+    l.href = portail ? 'manifest-espace.webmanifest?v=3' : 'manifest-app.webmanifest';
+    document.head.appendChild(l);
+  })();
 </script>
 <link rel="icon" href="icon-192-v2.png">
 <link rel="apple-touch-icon" href="https://nicolasbourdeix-art.github.io/amiis/apple-touch-icon-v2.png">
