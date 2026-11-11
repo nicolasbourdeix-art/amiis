@@ -2,7 +2,16 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" id="vp" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+  // iPhone : page de 980 px que le téléphone réduit lui-même (comme le lien ouvert dans Safari),
+  // au lieu d'une réduction par zoom faite par l'appli : sur certains iPhone (iPhone 13…), le
+  // bandeau, le menu des compagnies et le bouton du menu ressortaient deux fois trop gros.
+  // &zoom=appli : ancien réglage. Android garde la largeur de l'écran (appuis perdus sinon).
+  if (/iPhone|iPod/.test(navigator.userAgent) && !/[?&]zoom=appli/.test(location.search) && Math.min(screen.width, screen.height) < 900) {
+    document.getElementById('vp').content = 'width=980, viewport-fit=cover'; document.documentElement.className = 'reduit';
+  }
+</script>
 <meta name="robots" content="noindex">
 <title>AMIIS</title>
 <!-- Espace AMIIS « à icône unique » : le portail (script.google.com) affiché
@@ -34,6 +43,9 @@
   #attente { position: fixed; inset: 0; z-index: 5; background: #F3F4F6; display: flex; align-items: center; justify-content: center; transition: opacity .35s; }
   #attente { overflow: hidden; }
   #attente .ai-intro { --w: min(52vw, 36vh, 300px); }
+  /* Page de 980 px réduite par le téléphone : fenêtres d'aide agrandies d'autant. */
+  html.reduit #attente .ai-intro { --w: min(52vw, 36vh); }
+  html.reduit .carte { zoom: 2.4; max-width: none; }
   /* Animation d'ouverture AMIIS (bandes qui s'enroulent, têtes, nom, signature). */
   .ai-intro { --w: 280px; width: var(--w); display: flex; flex-direction: column; align-items: center; }
   .ai-logo { width: 100%; aspect-ratio: 1; will-change: transform; animation: ai-tour 2.3s cubic-bezier(.3,0,.15,1) both; }
