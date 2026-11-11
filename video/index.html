@@ -55,7 +55,10 @@
   var LIEN = 'https://nicolasbourdeix-art.github.io/amiis/video/';
   var TITRE = 'L’écosystème AMIIS', TEXTE = 'Découvrez en une minute comment AMIIS relie la diffusion, l’administration, la régie, les lieux et les artistes autour d’une date de spectacle.';
   var app = (navigator.userAgent.match(/iPhone|iPad|Android/i) || ['Ordinateur'])[0];
-  function stat(ev) { try { fetch(APPLI + '?stat=' + ev + '&app=' + encodeURIComponent(app), { mode: 'no-cors', keepalive: true }); } catch (e) {} }
+  // Adresse IP jointe : l'administrateur peut écarter les siennes (AMIIS, bureau…) des chiffres.
+  var ipP = fetch('https://api.ipify.org?format=json').then(function(r) { return r.json(); }).then(function(j) { return (j && j.ip) || ''; }).catch(function() { return ''; });
+  var ipT = Promise.race([ipP, new Promise(function(ok) { setTimeout(function() { ok(''); }, 3000); })]);
+  function stat(ev) { ipT.then(function(ip) { try { fetch(APPLI + '?stat=' + ev + '&app=' + encodeURIComponent(app) + '&ip=' + encodeURIComponent(ip), { mode: 'no-cors', keepalive: true }); } catch (e) {} }); }
   // Vidéo verticale sur un écran en hauteur (téléphone), horizontale sinon.
   var vertical = window.matchMedia && window.matchMedia('(orientation: portrait)').matches && Math.min(screen.width, screen.height) < 900;
   if (vertical) document.body.classList.add('vertical');
