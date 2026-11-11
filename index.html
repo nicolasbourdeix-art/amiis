@@ -99,6 +99,8 @@
   // plein écran dans un cadre, avec les mêmes paramètres (code d'accès,
   // contrat à signer, dossier…). Intégrée ainsi, l'application n'a pas le
   // bandeau Google « créée par un utilisateur d'Apps Script ».
+  // Lien ?moi=1 : cet appareil est celui de l'administrateur (pages vidéo et démo du site) ; ?moi=0 pour annuler.
+  try { var moiP = new URLSearchParams(location.search).get('moi'); if (moiP === '1') localStorage.setItem('amiis_moi', '1'); else if (moiP === '0') localStorage.removeItem('amiis_moi'); } catch (e) {}
   var APP = 'https://script.google.com/macros/s/AKfycbz4gHbfrNc0zJN1CrLb5y6s1JuF32mAdR-yFUDsEH0RKcSutef6GppSAZFIkJxBPfQIZg/exec';
   // Ouverture directe (secours) : cadre=direct, sinon l'appli reviendrait ici.
   var qd = new URLSearchParams(location.search); qd.set('cadre', 'direct');

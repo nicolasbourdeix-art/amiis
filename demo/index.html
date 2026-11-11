@@ -76,7 +76,10 @@
   var app = (navigator.userAgent.match(/iPhone|iPad|Android/i) || ['Ordinateur'])[0];
   // Compteurs anonymes (avec l'adresse IP, pour écarter celles d'AMIIS), lus dans l'appli : Configuration › Accès › Trafic.
   var ipP = fetch('https://api.ipify.org?format=json').then(function(r) { return r.json(); }).then(function(j) { return (j && j.ip) || ''; }).catch(function() { return ''; });
-  var ipT = Promise.race([ipP, new Promise(function(ok) { setTimeout(function() { ok(''); }, 3000); })]);
+  var ipT0 = Promise.race([ipP, new Promise(function(ok) { setTimeout(function() { ok(''); }, 3000); })]);
+  // Appareil de l'administrateur (lien ?moi=1) : compté à part, écarté du trafic.
+  var moi = false; try { moi = localStorage.getItem('amiis_moi') === '1'; } catch (e) {}
+  var ipT = ipT0.then(function(ip) { return moi ? 'moi ' + (ip || '0.0.0.0') : ip; });
   function stat(ev, detail) { return ipT.then(function(ip) { try { return fetch(APPLI + '?stat=' + ev + '&app=' + encodeURIComponent(app) + '&ip=' + encodeURIComponent(ip) + (detail ? '&detail=' + encodeURIComponent(detail) : ''), { mode: 'no-cors', keepalive: true }).catch(function() {}); } catch (e) {} }); }
   stat('demo_page');
   // Vidéo verticale sur un écran en hauteur (téléphone), horizontale sinon.

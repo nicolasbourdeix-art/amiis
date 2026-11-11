@@ -58,7 +58,10 @@
   var app = (navigator.userAgent.match(/iPhone|iPad|Android/i) || ['Ordinateur'])[0];
   // Adresse IP jointe : l'administrateur peut écarter les siennes (AMIIS, bureau…) des chiffres.
   var ipP = fetch('https://api.ipify.org?format=json').then(function(r) { return r.json(); }).then(function(j) { return (j && j.ip) || ''; }).catch(function() { return ''; });
-  var ipT = Promise.race([ipP, new Promise(function(ok) { setTimeout(function() { ok(''); }, 3000); })]);
+  var ipT0 = Promise.race([ipP, new Promise(function(ok) { setTimeout(function() { ok(''); }, 3000); })]);
+  // Appareil de l'administrateur (lien ?moi=1) : compté à part, écarté du trafic.
+  var moi = false; try { moi = localStorage.getItem('amiis_moi') === '1'; } catch (e) {}
+  var ipT = ipT0.then(function(ip) { return moi ? 'moi ' + (ip || '0.0.0.0') : ip; });
   function stat(ev) { ipT.then(function(ip) { try { fetch(APPLI + '?stat=' + ev + '&app=' + encodeURIComponent(app) + '&ip=' + encodeURIComponent(ip), { mode: 'no-cors', keepalive: true }); } catch (e) {} }); }
   // Vidéo verticale sur un écran en hauteur (téléphone), horizontale sinon.
   var vertical = window.matchMedia && window.matchMedia('(orientation: portrait)').matches && Math.min(screen.width, screen.height) < 900;
